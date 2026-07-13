@@ -81,3 +81,20 @@ export default defineConfig([
 ])
 
 ```
+
+## Run locally
+
+```bash
+cd promptshieldv1
+npm install
+npm run dev
+```
+
+Then open the local URL shown in the terminal, typically `http://localhost:5173`.
+
+To build the app for production:
+
+```bash
+npm run build
+```
+
