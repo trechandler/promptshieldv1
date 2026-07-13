@@ -1,11 +1,19 @@
-# React + TypeScript + Vite
+# PromptShield
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PromptShield is a React + TypeScript + Vite frontend for detecting and redacting sensitive information before submitting text to an AI application.
 
-Currently, two official plugins are available:
+## What this project includes
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- A navigation header labeled **PromptShield**
+- A prompt textarea for user input
+- A **Scan Prompt** button
+- Results showing risk score, risk level, detected sensitive information, redacted prompt, and a suggested safe prompt
+- A privacy notice explaining that submitted text is not stored
+- Local-only scanning behavior with no backend connection yet
+
+## About the frontend
+
+This repository contains the Vite app in `src/` and is designed as a starting point for prompt hygiene tooling.
 
 ## React Compiler
 
