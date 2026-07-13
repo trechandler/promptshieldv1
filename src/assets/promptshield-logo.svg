@@ -1,0 +1,13 @@
+<svg width="260" height="60" viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">PromptShield logo</title>
+  <desc id="logoDesc">PromptShield logo text with Prompt in white and Shield in purple</desc>
+  <defs>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9f7aea" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+  </defs>
+  <rect width="260" height="60" rx="16" fill="rgba(255,255,255,0.08)" />
+  <text x="14" y="38" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" fill="#ffffff">PROMPT</text>
+  <text x="150" y="38" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" fill="url(#purpleGrad)">SHIELD</text>
+</svg>

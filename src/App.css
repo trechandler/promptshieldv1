@@ -15,17 +15,14 @@
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 1rem;
   box-sizing: border-box;
 }
 
-.brand {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.brand-logo {
+  height: 42px;
+  width: auto;
 }
 
 .scanner-card {

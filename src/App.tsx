@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import scanner from './utils/promptScanner'
 import type { ScanResult as LocalScanResult } from './types/risk'
+import logo from './assets/promptshield-logo.svg'
 
 function App() {
   const [prompt, setPrompt] = useState('')
@@ -32,7 +33,7 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand">PromptShield</div>
+        <img src={logo} alt="PromptShield logo" className="brand-logo" />
       </header>
 
       <main className="scanner-card">
