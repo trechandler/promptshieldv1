@@ -1,121 +1,143 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
+import scanner from './utils/promptScanner'
+import type { ScanResult as LocalScanResult } from './types/risk'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [prompt, setPrompt] = useState('')
+  const [result, setResult] = useState<LocalScanResult | null>(null)
+
+  const getRiskClass = (level: string | null | undefined) => {
+    if (!level) return 'risk-none'
+    if (level.toLowerCase() === 'critical' || level.toLowerCase() === 'high') return 'risk-high'
+    if (level.toLowerCase() === 'elevated' || level.toLowerCase() === 'moderate') return 'risk-medium'
+    if (level.toLowerCase() === 'low') return 'risk-low'
+    return 'risk-none'
+  }
+
+  const handleScan = () => {
+    const trimmed = prompt.trim()
+    if (!trimmed) {
+      setResult(null)
+      return
+    }
+    const r = scanner.scanPrompt(trimmed)
+    setResult(r)
+  }
+
+  const suggestedPrompt = result
+    ? `Please assist with the following prompt (sensitive details removed):\n\n${result.redactedText}`
+    : ''
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand">PromptShield</div>
+      </header>
 
-      <div className="ticks"></div>
+      <main className="scanner-card">
+        <h1>Scan your prompt before submitting it.</h1>
+        <p className="subtitle">Review prompt content locally before sharing it with an AI tool.</p>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <label className="prompt-label" htmlFor="prompt-input">
+          Enter prompt
+        </label>
+        <textarea
+          id="prompt-input"
+          className="prompt-input"
+          placeholder="Paste the prompt you plan to submit…"
+          value={prompt}
+          onChange={(event) => setPrompt(event.target.value)}
+        />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button type="button" className="scan-button" onClick={handleScan}>
+            Scan Prompt
+          </button>
+          <button
+            type="button"
+            className="scan-button secondary"
+            onClick={() => {
+              setPrompt('')
+              setResult(null)
+            }}
+          >
+            Clear
+          </button>
+        </div>
+
+        <section className="results" aria-live="polite">
+          <h2>Scan results</h2>
+          {result ? (
+            <div className="results-grid">
+              <div className="result-item">
+                <span className="result-label">Risk score</span>
+                <span className="result-value">{result.overallScore}/100</span>
+              </div>
+              <div className="result-item">
+                <span className="result-label">Risk level</span>
+                <span className={`result-value ${getRiskClass(result.riskLevel)}`}>{result.riskLevel}</span>
+              </div>
+              <div className="result-item">
+                <span className="result-label">Recommended action</span>
+                <span className="result-value">{result.recommendedAction}</span>
+              </div>
+              <div className="result-item" style={{ gridColumn: '1 / -1' }}>
+                <span className="result-label">Redacted prompt</span>
+                <div className="result-value" style={{ whiteSpace: 'pre-wrap' }}>{result.redactedText}</div>
+              </div>
+              <div className="result-item" style={{ gridColumn: '1 / -1' }}>
+                <span className="result-label">Findings</span>
+                <div className="result-value">
+                  {result.findings.length === 0 ? (
+                    'None'
+                  ) : (
+                    <ul>
+                      {result.findings.map((f) => (
+                        <li key={f.id}>
+                          <strong>{f.categoryName}</strong>: {f.findingType} — {f.explanation} — {f.redactedValue}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              <div className="result-item" style={{ gridColumn: '1 / -1' }}>
+                <span className="result-label">Suggested safe prompt</span>
+                <div className="result-value">
+                  {suggestedPrompt ? (
+                    <>
+                      <div style={{ whiteSpace: 'pre-wrap' }}>{suggestedPrompt}</div>
+                      <div style={{ marginTop: 8 }}>
+                        <button
+                          type="button"
+                          className="scan-button"
+                          onClick={() => setPrompt(suggestedPrompt)}
+                        >
+                          Use suggested prompt
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    'No suggestion available'
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="results-grid">
+              <div className="result-item">
+                <span className="result-label">Status</span>
+                <span className="result-value">Not scanned yet</span>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <p className="privacy-notice">Submitted text is not stored. This preview runs locally in your browser.</p>
+      </main>
+    </div>
   )
 }
 
